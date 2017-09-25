@@ -35,7 +35,7 @@ static function DelayedEvac_GameState_EvacZoneSpawner PlaceEvacZoneSpawner(
 	SpawnerState = DelayedEvac_GameState_EvacZoneSpawner(NewGameState.CreateStateObject(class'DelayedEvac_GameState_EvacZoneSpawner'));
 	SpawnerState.Team = InTeam;
 
-	SpawnerState.Countdown = default.EvacCountdownTurns * 2;
+	SpawnerState.Countdown = default.EvacCountdownTurns;
 	SpawnerState.CenterLocationV = SpawnLocation;
 	NewGameState.AddStateObject(SpawnerState);
 	`log("DelayedEvac : Placing Evac Zone Spawner at " @ SpawnLocation);
@@ -54,14 +54,18 @@ function OnEndTacticalPlay(XComGameState NewGameState)
 
 	EventManager = `XEVENTMGR;
 	ThisObj = self;
+
 	EventManager.UnRegisterFromEvent(ThisObj, 'PlayerTurnBegun');
 }
 
 
 function RegisterListener () {
 	local Object ThisObj;
+  local XComGameState_Player PlayerState;
+
 	ThisObj = self;
-	`XEVENTMGR.RegisterForEvent(ThisObj, 'PlayerTurnBegun', OnTurnBegun, ELD_OnStateSubmitted);
+  PlayerState = class'XComGameState_Player'.static.GetPlayerState(eTeam_XCom);
+	`XEVENTMGR.RegisterForEvent(ThisObj, 'PlayerTurnBegun', OnTurnBegun, ELD_OnStateSubmitted, , PlayerState);
 }
 
 // This is called at the start of each AI turn
